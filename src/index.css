@@ -2,3 +2,14 @@
 * {
   box-sizing: border-box;
 }
+body {
+  font-family:
+    system-ui,
+    -apple-system,
+    Segoe UI,
+    Roboto,
+    sans-serif;
+  line-height: 1.5;
+  color: #e5e7eb;
+  background-color: #0f172a;
+}
