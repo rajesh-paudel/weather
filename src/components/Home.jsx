@@ -72,6 +72,7 @@ const Home = () => {
   }, []);
 
   const handleSearch = (event) => {
+    if (!input.trim() && input.trim() == "") return;
     event.preventDefault();
     setHistory((prev) => (prev.includes(input) ? prev : [input, ...prev]));
     setCity(input);
