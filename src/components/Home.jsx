@@ -95,7 +95,7 @@ const Home = () => {
       </div>
 
       {/* row 2nd */}
-      <div className="flex flex-col sm:flex-row sm:gap-10 items-start sm:items-center gap-5">
+      <div className="flex flex-col sm:flex-row sm:gap-10 justify-between items-start sm:items-center gap-8">
         <div className="flex items-center justify-center gap-6">
           <div className="text-8xl font-semibold">
             {isCelsius ? weather?.current.temp_c : weather?.current.temp_f}
