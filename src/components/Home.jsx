@@ -15,8 +15,13 @@ const Home = () => {
   const [loading, setLoading] = useState(false);
   const [isCelsius, setIsCelsius] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [history, setHistory] = useState([]);
+
+  const [history, setHistory] = useState(() => {
+    const weatherSearchHistory = localStorage.getItem("weatherSearchHistory");
+    return weatherSearchHistory ? JSON.parse(weatherSearchHistory) : [];
+  });
   const [error, setError] = useState(null);
+
   useEffect(() => {
     if (!isModalOpen) return;
 
@@ -45,6 +50,10 @@ const Home = () => {
     };
   }, [isModalOpen]);
 
+  useEffect(() => {
+    localStorage.setItem("weatherSearchHistory", JSON.stringify(history));
+  }, [history]);
+
   const fetchWeather = async (cityName) => {
     if (!cityName) return;
     try {
@@ -72,11 +81,21 @@ const Home = () => {
   }, []);
 
   const handleSearch = (event) => {
-    if (!input.trim() && input.trim() == "") return;
     event.preventDefault();
-    setHistory((prev) => (prev.includes(input) ? prev : [input, ...prev]));
-    setCity(input);
-    fetchWeather(input);
+    const trimmedInput = input.trim();
+    if (!trimmedInput) return;
+
+    setHistory((prev) => {
+      const normalizedInput = trimmedInput.toLowerCase();
+      const nextHistory = prev.filter(
+        (item) => item.toLowerCase() !== normalizedInput,
+      );
+
+      return [trimmedInput, ...nextHistory];
+    });
+    setInput(trimmedInput);
+    setCity(trimmedInput);
+    fetchWeather(trimmedInput);
     setIsModalOpen(false);
   };
   const filteredHistory = history.filter((item) =>
