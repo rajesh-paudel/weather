@@ -15,7 +15,6 @@ const Home = () => {
   const [loading, setLoading] = useState(false);
   const [isCelsius, setIsCelsius] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
   const [history, setHistory] = useState(() => {
     const weatherSearchHistory = localStorage.getItem("weatherSearchHistory");
     return weatherSearchHistory ? JSON.parse(weatherSearchHistory) : [];
@@ -169,7 +168,7 @@ const Home = () => {
               Search
             </button>
           </form>
-          {isModalOpen && (
+          {isModalOpen && history.length > 0 && (
             <div className="absolute top-full w-full left-0 mt-1 z-50">
               <SearchHistoryModal
                 history={filteredHistory}
