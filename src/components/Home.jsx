@@ -127,6 +127,12 @@ const Home = () => {
 
     return `${weekday} ,  ${day} ${month} ${year} | ${time}`;
   };
+  const formatLocation = (location) => {
+    if (location) {
+      return `${location?.name},${location?.country}`;
+    }
+    return null;
+  };
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center ">
@@ -140,8 +146,8 @@ const Home = () => {
       {/* row 1st */}
       <div className=" flex flex-col-reverse sm:flex-row  justify-between items-start sm:items-center gap-5">
         <div className=" flex flex-col justify-center items-start">
-          <div className="text-5xl font-bold pb-2">
-            {weather?.location?.name}
+          <div className="text-3xl sm:text-4xl font-bold pb-2">
+            {formatLocation(weather?.location)}
           </div>
           <div className="font-semibold">
             {formatDateTime(weather?.location?.localtime)}

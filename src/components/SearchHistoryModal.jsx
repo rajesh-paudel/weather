@@ -5,6 +5,7 @@ const SearchHistoryModal = ({
   handleDeleteHistory,
   selectHistory,
 }) => {
+  if (history.length == 0) return null;
   return (
     <div className="w-full bg-white text-gray-700 rounded-md  flex flex-col  ">
       <div className="px-4 text-{14px}  py-2 border-b border-gray-100">
