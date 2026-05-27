@@ -16,7 +16,7 @@ const Home = () => {
   const [isCelsius, setIsCelsius] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [history, setHistory] = useState([]);
-
+  const [error, setError] = useState(null);
   useEffect(() => {
     if (!isModalOpen) return;
 
@@ -55,10 +55,10 @@ const Home = () => {
 
       const data = await res.json();
       setWeather(data);
-
+      setError(null);
       if (data.error) {
         setWeather(null);
-
+        setError(data.error);
         return;
       }
     } catch (error) {
@@ -116,6 +116,7 @@ const Home = () => {
       </div>
     );
   }
+
   return (
     <div className=" min-h-screen flex flex-col max-w-5xl mx-auto py-20 gap-10  px-4 sm:px-8  ">
       {/* row 1st */}
@@ -162,7 +163,7 @@ const Home = () => {
       </div>
 
       {/* row 2nd */}
-      {weather && (
+      {weather ? (
         <div className="flex flex-col sm:flex-row sm:gap-10 justify-between items-start sm:items-center gap-8">
           <div className="flex items-center justify-center gap-6">
             <div className="text-8xl font-semibold">
@@ -200,7 +201,15 @@ const Home = () => {
             <div className="flex flex-col gap-1 justify-center items-start">
               <p className="flex items-center justify-center gap-2">
                 <FaThermometerHalf />
-                <span>Feels like : {weather?.current.feelslike_c}&deg;c</span>
+                {isCelsius ? (
+                  <span>
+                    Feels like : {weather?.current.feelslike_c} &deg;C
+                  </span>
+                ) : (
+                  <span>
+                    Feels like : {weather?.current.feelslike_f} &deg;F
+                  </span>
+                )}
               </p>
               <p className="flex items-center justify-center gap-2">
                 <WiHumidity size={16} />
@@ -213,13 +222,19 @@ const Home = () => {
             </div>
           </div>
         </div>
+      ) : (
+        <div className="flex items-center justify-center  pt-20">
+          {error?.message}
+        </div>
       )}
 
       {/* row 3rd */}
       {weather && (
         <div className="flex items-center justify-between gap-5 border-2 border-white rounded-2xl p-4 flex-wrap">
           {weather?.forecast.forecastday.map((day) => {
-            return <ForecastDay key={day.date} day={day} />;
+            return (
+              <ForecastDay key={day.date} day={day} isCelsius={isCelsius} />
+            );
           })}
         </div>
       )}

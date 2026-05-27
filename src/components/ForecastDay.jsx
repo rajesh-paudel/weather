@@ -1,6 +1,6 @@
 import React from "react";
 
-const ForecastDay = ({ day }) => {
+const ForecastDay = ({ day, isCelsius }) => {
   const getDay = (dateStr) => {
     if (!dateStr) return "";
 
@@ -21,7 +21,8 @@ const ForecastDay = ({ day }) => {
         ></img>
       </div>
       <div>
-        {day?.day.maxtemp_c}&deg; - {day?.day.mintemp_c}&deg;
+        {isCelsius ? day?.day.maxtemp_c : day?.day.maxtemp_f}&deg; -{" "}
+        {isCelsius ? day?.day.mintemp_c : day?.day.mintemp_f}&deg;
       </div>
       <div className="text-[14px]">{day?.day.condition.text}</div>
     </div>
