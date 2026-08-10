@@ -12,7 +12,7 @@ const Home = () => {
   const [input, setInput] = useState("");
   const [city, setCity] = useState("Kathmandu");
   const [weather, setWeather] = useState<WeatherData | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [isCelsius, setIsCelsius] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [history, setHistory] = useState<string[]>(() => {
@@ -60,6 +60,7 @@ const Home = () => {
   const fetchWeather = async (cityName: string) => {
     if (!cityName) return;
     try {
+      setLoading(true);
       const res = await fetch(
         `https://api.weatherapi.com/v1/forecast.json?key=${API_KEY}&q=${cityName}&days=7`,
       );
@@ -97,8 +98,6 @@ const Home = () => {
     });
     setInput(trimmedInput);
     setCity(trimmedInput);
-    setLoading(true);
-    fetchWeather(trimmedInput);
     setIsModalOpen(false);
   };
   const filteredHistory = history.filter((item) =>
@@ -110,8 +109,6 @@ const Home = () => {
   const handleSelectHistory = (value: string) => {
     setInput(value);
     setCity(value);
-    setLoading(true);
-    fetchWeather(value);
     setIsModalOpen(false);
   };
 
