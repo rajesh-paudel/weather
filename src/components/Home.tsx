@@ -62,7 +62,7 @@ const Home = () => {
     try {
       setLoading(true);
       const res = await fetch(
-        `https://api.weatherapi.com/v1/forecast.json?key=${API_KEY}&q=${cityName}&days=7`,
+        `https://api.weatherapi.com/v1/forecast.json?key=${API_KEY}&q=${cityName}&days=3`,
       );
 
       const data = (await res.json()) as WeatherData;
@@ -256,7 +256,7 @@ const Home = () => {
 
       {/* row 3rd */}
       {weather && (
-        <div className="flex items-center justify-between gap-5 border-2 border-white rounded-2xl p-4 flex-wrap">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 border-2 border-white rounded-lg p-4">
           {weather.forecast.forecastday.map((day) => {
             return (
               <ForecastDay key={day.date} day={day} isCelsius={isCelsius} />
