@@ -1,17 +1,23 @@
-import React from "react";
 import { IoCloseSharp } from "react-icons/io5";
+
+interface SearchHistoryModalProps {
+  history: string[];
+  handleDeleteHistory: (value: string) => void;
+  selectHistory: (value: string) => void;
+}
+
 const SearchHistoryModal = ({
   history,
   handleDeleteHistory,
   selectHistory,
-}) => {
-  if (history.length == 0) return null;
+}: SearchHistoryModalProps) => {
+  if (history.length === 0) return null;
   return (
     <div className="w-full bg-white text-gray-700 rounded-md  flex flex-col  ">
-      <div className="px-4 text-{14px}  py-2 border-b border-gray-100">
+      <div className="px-4 text-14px py-2 border-b border-gray-100">
         recent searches
       </div>
-      {history?.slice(0, 5).map((his) => {
+      {history.slice(0, 5).map((his) => {
         return (
           <div
             key={his}

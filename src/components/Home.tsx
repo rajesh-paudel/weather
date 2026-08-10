@@ -1,36 +1,40 @@
-import React from "react";
-import { FaThermometerHalf } from "react-icons/fa";
+import type { FormEvent } from "react";
+import { FaThermometerHalf, FaWind } from "react-icons/fa";
 import { WiHumidity } from "react-icons/wi";
-import { FaWind } from "react-icons/fa";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import ForecastDay from "./ForecastDay";
 import SearchHistoryModal from "./SearchHistoryModal";
+import type { Location, WeatherData, WeatherError } from "../types";
 const API_KEY = import.meta.env.VITE_WEATHER_API_KEY;
 
 const Home = () => {
-  const modalRef = useRef(null);
+  const modalRef = useRef<HTMLDivElement>(null);
   const [input, setInput] = useState("");
   const [city, setCity] = useState("Kathmandu");
-  const [weather, setWeather] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [weather, setWeather] = useState<WeatherData | null>(null);
+  const [loading, setLoading] = useState(true);
   const [isCelsius, setIsCelsius] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [history, setHistory] = useState(() => {
+  const [history, setHistory] = useState<string[]>(() => {
     const weatherSearchHistory = localStorage.getItem("weatherSearchHistory");
     return weatherSearchHistory ? JSON.parse(weatherSearchHistory) : [];
   });
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<WeatherError | null>(null);
 
   useEffect(() => {
     if (!isModalOpen) return;
 
-    const handlePointerDownOutside = (event) => {
-      if (modalRef.current && !modalRef.current.contains(event.target)) {
+    const handlePointerDownOutside = (event: PointerEvent) => {
+      if (
+        modalRef.current &&
+        event.target instanceof Node &&
+        !modalRef.current.contains(event.target)
+      ) {
         setIsModalOpen(false);
       }
     };
 
-    const handleEscape = (event) => {
+    const handleEscape = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         setIsModalOpen(false);
       }
@@ -53,20 +57,19 @@ const Home = () => {
     localStorage.setItem("weatherSearchHistory", JSON.stringify(history));
   }, [history]);
 
-  const fetchWeather = async (cityName) => {
+  const fetchWeather = async (cityName: string) => {
     if (!cityName) return;
     try {
-      setLoading(true);
       const res = await fetch(
         `https://api.weatherapi.com/v1/forecast.json?key=${API_KEY}&q=${cityName}&days=7`,
       );
 
-      const data = await res.json();
+      const data = (await res.json()) as WeatherData;
       setWeather(data);
       setError(null);
       if (data.error) {
         setWeather(null);
-        setError(data.error);
+        setError(data.error ?? null);
         return;
       }
     } catch (error) {
@@ -77,9 +80,9 @@ const Home = () => {
   };
   useEffect(() => {
     fetchWeather(city);
-  }, []);
+  }, [city]);
 
-  const handleSearch = (event) => {
+  const handleSearch = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const trimmedInput = input.trim();
     if (!trimmedInput) return;
@@ -94,23 +97,25 @@ const Home = () => {
     });
     setInput(trimmedInput);
     setCity(trimmedInput);
+    setLoading(true);
     fetchWeather(trimmedInput);
     setIsModalOpen(false);
   };
   const filteredHistory = history.filter((item) =>
     item.toLowerCase().includes(input.toLowerCase()),
   );
-  const handleDeleteHistory = (value) => {
+  const handleDeleteHistory = (value: string) => {
     setHistory((prev) => prev.filter((item) => item !== value));
   };
-  const handleSelectHistory = (value) => {
+  const handleSelectHistory = (value: string) => {
     setInput(value);
     setCity(value);
+    setLoading(true);
     fetchWeather(value);
     setIsModalOpen(false);
   };
 
-  const formatDateTime = (dateStr) => {
+  const formatDateTime = (dateStr?: string) => {
     if (!dateStr) return;
     const date = new Date(dateStr.replace(" ", "T"));
 
@@ -127,9 +132,9 @@ const Home = () => {
 
     return `${weekday} ,  ${day} ${month} ${year} | ${time}`;
   };
-  const formatLocation = (location) => {
+  const formatLocation = (location?: Location) => {
     if (location) {
-      return `${location?.name},${location?.country}`;
+      return `${location.name},${location.country}`;
     }
     return null;
   };
@@ -191,7 +196,7 @@ const Home = () => {
         <div className="flex flex-col sm:flex-row sm:gap-10 justify-between items-start sm:items-center gap-8">
           <div className="flex items-center justify-center gap-6">
             <div className="text-8xl font-semibold">
-              {isCelsius ? weather?.current.temp_c : weather?.current.temp_f}
+              {isCelsius ? weather.current.temp_c : weather.current.temp_f}
             </div>
             <div className="flex flex-col justify-center items-start self-end mb-2">
               <div className="flex items-center justify-center gap-4 ">
@@ -210,14 +215,14 @@ const Home = () => {
                 </button>
               </div>
               <div className="text-xl font-semibold">
-                {weather?.current.condition.text}
+                {weather.current.condition.text}
               </div>
             </div>
           </div>
           <div className="flex items-center justify-center ">
             <div className="w-50 h-50">
               <img
-                src={weather?.current.condition.icon}
+                src={weather.current.condition.icon}
                 alt="weather icon"
                 className="w-full"
               ></img>
@@ -227,21 +232,21 @@ const Home = () => {
                 <FaThermometerHalf />
                 {isCelsius ? (
                   <span>
-                    Feels like : {weather?.current.feelslike_c} &deg;C
+                    Feels like : {weather.current.feelslike_c} &deg;C
                   </span>
                 ) : (
                   <span>
-                    Feels like : {weather?.current.feelslike_f} &deg;F
+                    Feels like : {weather.current.feelslike_f} &deg;F
                   </span>
                 )}
               </p>
               <p className="flex items-center justify-center gap-2">
                 <WiHumidity size={16} />
-                <span>Humidity : {weather?.current.humidity}%</span>
+                <span>Humidity : {weather.current.humidity}%</span>
               </p>
               <p className="flex items-center justify-center gap-2">
                 <FaWind />
-                <span>Wind: {weather?.current.wind_kph} km/h</span>
+                <span>Wind: {weather.current.wind_kph} km/h</span>
               </p>
             </div>
           </div>
@@ -255,7 +260,7 @@ const Home = () => {
       {/* row 3rd */}
       {weather && (
         <div className="flex items-center justify-between gap-5 border-2 border-white rounded-2xl p-4 flex-wrap">
-          {weather?.forecast.forecastday.map((day) => {
+          {weather.forecast.forecastday.map((day) => {
             return (
               <ForecastDay key={day.date} day={day} isCelsius={isCelsius} />
             );
