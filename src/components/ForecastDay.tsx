@@ -5,6 +5,10 @@ interface ForecastDayProps {
   isCelsius: boolean;
 }
 
+
+
+
+
 const ForecastDay = ({ day, isCelsius }: ForecastDayProps) => {
   const getDay = (dateStr: string): string => {
     if (!dateStr) return "";
