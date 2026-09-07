@@ -6,9 +6,6 @@ interface ForecastDayProps {
 }
 
 
-
-
-
 const ForecastDay = ({ day, isCelsius }: ForecastDayProps) => {
   const getDay = (dateStr: string): string => {
     if (!dateStr) return "";
